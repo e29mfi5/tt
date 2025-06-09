@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>อินโฟกราฟิกสรุปคดีแจ้งความเท็จ ศาลจังหวัดหลังสวน</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: #EAF5FF;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+        .timeline {
+            position: relative;
+            padding: 2rem 0;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 1.5rem;
+            height: 100%;
+            width: 4px;
+            background: #52A5FF;
+        }
+        .timeline-item {
+            position: relative;
+            padding-left: 4rem;
+            margin-bottom: 2rem;
+        }
+        .timeline-dot {
+            position: absolute;
+            left: calc(1.5rem - 0.5rem + 2px);
+            top: 0.25rem;
+            height: 1rem;
+            width: 1rem;
+            background: #0079FF;
+            border-radius: 50%;
+            border: 4px solid #EAF5FF;
+        }
+        .timeline-content {
+            background-color: white;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+    </style>
+    <!-- 
+    PALETTE SELECTION: Brilliant Blues 
+    - #004AAD (Deep Blue)
+    - #0079FF (Bright Blue)
+    - #52A5FF (Light Blue)
+    - #B3D7FF (Pale Blue)
+    - #EAF5FF (Very Pale Blue/Background)
+    -->
+    <!-- 
+    NARRATIVE & STRUCTURE PLAN
+    The infographic tells the story of the court case อ๓๘๘/๒๕๖๖.
+    1. Header: Title of the case.
+    2. Section 1: Case Overview. Introduces the case number, court, and the core accusation (แจ้งความเท็จ - False Report). Uses "Single Big Number" style for the case number.
+    3. Section 2: The Key Players. A table introducing the main individuals involved and their roles/claims.
+    4. Section 3: Timeline of the Incident. A vertical timeline built with HTML/CSS showing the sequence of events on Nov 25, 2565, from the initial argument to the police search.
+    5. Section 4: The Core Conflict - Two Realities. A side-by-side comparison of the conflicting stories told by the plaintiff (Ms. Phutthachat) and the defendant (Mr. Winai).
+    6. Section 5: The Verdict & The Reasons Why. This section presents the final verdict ("Acquitted") and uses a Donut Chart and info cards to visualize the key factors that led the court to have "reasonable doubt". 
+    7. Footer: A concluding statement about the legal principle "benefit of the doubt".
+    -->
+    <!-- 
+    VISUALIZATION SELECTION PLAN
+    - Case Number: Goal: Inform. Chosen Viz: Single Big Number (Styled Text). Justification: Highlights the official case identifier. Method: HTML/Tailwind. CONFIRMED NO SVG.
+    - Key Players: Goal: Organize. Chosen Viz: Table. Justification: Clearly organizes multiple people and their roles for easy comparison. Method: HTML/Tailwind Table. CONFIRMED NO SVG.
+    - Timeline of Events: Goal: Change. Chosen Viz: Timeline. Justification: Shows the chronological progression of events. Method: Structured HTML/CSS with Tailwind for styling. CONFIRMED NO SVG, NO MERMAID JS.
+    - Conflicting Stories: Goal: Compare. Chosen Viz: Two-Column Layout. Justification: Directly juxtaposes the opposing claims for clear contrast. Method: HTML/Tailwind Grid. CONFIRMED NO SVG.
+    - Reasons for Acquittal: Goal: Compare/Composition. Chosen Viz: Donut Chart. Justification: Shows how multiple factors contributed to the "whole" of the court's doubt. Method: Chart.js (Canvas). CONFIRMED NO SVG.
+    - Individual Reasons (Cards): Goal: Inform. Chosen Viz: Icon + Text Cards. Justification: Breaks down complex legal reasoning into digestible points. Method: HTML/Tailwind with Unicode characters. CONFIRMED NO SVG.
+    - The Verdict: Goal: Inform. Chosen Viz: Single Big Number/Text. Justification: Clearly and strongly communicates the final outcome. Method: HTML/Tailwind. CONFIRMED NO SVG.
+    -->
+    <!-- CONFIRMATION: NEITHER Mermaid JS NOR SVG were used in this output. All visualizations are created using Chart.js (Canvas) or structured HTML/CSS with Tailwind. -->
+</head>
+<body class="text-gray-800">
+
+    <div class="container mx-auto p-4 md:p-8 max-w-7xl">
+
+        <header class="text-center mb-12">
+            <h1 class="text-3xl md:text-5xl font-bold text-[#004AAD] mb-2">อินโฟกราฟิกสรุปคำพิพากษา</h1>
+            <p class="text-lg md:text-xl text-[#0079FF]">คดีแจ้งความเท็จ | ศาลจังหวัดหลังสวน</p>
+        </header>
+
+        <main>
+            <section id="case-overview" class="mb-16">
+                <div class="bg-white rounded-lg shadow-md p-6 md:p-8 text-center">
+                    <h2 class="text-2xl font-bold text-[#004AAD] mb-4">ภาพรวมคดี</h2>
+                    <p class="text-gray-600 mb-6 max-w-3xl mx-auto">
+                        คดีอาญาหมายเลขแดงที่ <span class="font-semibold text-[#0079FF]">อ๓๘๘/๒๕๖๖</span> เป็นคดีที่พนักงานอัยการฟ้องนายวินัย เพชรประสงค์ ในข้อหาแจ้งความเท็จต่อเจ้าพนักงาน โดยกล่าวหาว่านางสาวพุทธชาด ฤทธิชู มีอาวุธปืนและข่มขู่ตน ซึ่งท้ายที่สุดศาลมีคำพิพากษายกฟ้อง
+                    </p>
+                    <div class="border-t border-gray-200 pt-6">
+                        <p class="text-lg text-gray-700">ข้อหาหลัก</p>
+                        <p class="text-3xl font-bold text-[#004AAD]">แจ้งข้อความอันเป็นเท็จต่อเจ้าพนักงาน</p>
+                        <p class="text-sm text-gray-500 mt-1">(ประมวลกฎหมายอาญา มาตรา 173, 174)</p>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="players" class="mb-16">
+                <h2 class="text-2xl md:text-3xl font-bold text-center text-[#004AAD] mb-8">บุคคลสำคัญในคดี</h2>
+                <div class="overflow-x-auto bg-white rounded-lg shadow-md p-4">
+                    <table class="w-full text-left">
+                        <thead class="bg-[#B3D7FF]">
+                            <tr>
+                                <th class="p-4 font-bold text-[#004AAD]">บุคคล</th>
+                                <th class="p-4 font-bold text-[#004AAD]">บทบาท</th>
+                                <th class="p-4 font-bold text-[#004AAD]">สรุปพฤติการณ์/คำกล่าวอ้าง</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            <tr class="hover:bg-gray-50">
+                                <td class="p-4 font-semibold">นางสาวพุทธชาด ฤทธิชู</td>
+                                <td class="p-4">โจทก์ร่วม/ผู้เสียหาย</td>
+                                <td class="p-4">อ้างว่าถูกจำเลยทำร้ายร่างกาย และถูกกล่าวหาเท็จๆ ว่ามีอาวุธปืน</td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="p-4 font-semibold">นายวินัย เพชรประสงค์</td>
+                                <td class="p-4">จำเลย</td>
+                                <td class="p-4">อ้างว่าถูกโจทก์ร่วมใช้อาวุธปืนข่มขู่และจี้เอว</td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="p-4 font-semibold">ร.ต.ต. กิตติพงษ์ วงศ์เณร</td>
+                                <td class="p-4">ผู้เสียหายที่ 1/ตำรวจ</td>
+                                <td class="p-4">รับแจ้งเหตุจากจำเลย และดำเนินการตรวจค้นแต่ไม่พบอาวุธปืน</td>
+                            </tr>
+                             <tr class="hover:bg-gray-50">
+                                <td class="p-4 font-semibold">นายอนิวรรต์น ชูช่วย</td>
+                                <td class="p-4">พยาน (ไม่ได้เบิกความ)</td>
+                                <td class="p-4">บุตรบุญธรรมของโจทก์ร่วม ถูกอ้างว่าเป็นผู้นำกระเป๋า/อาวุธปืนออกไป</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="timeline" class="mb-16">
+                 <h2 class="text-2xl md:text-3xl font-bold text-center text-[#004AAD] mb-8">ลำดับเหตุการณ์ในวันเกิดเหตุ (25 พ.ย. 2565)</h2>
+                 <div class="timeline max-w-3xl mx-auto">
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">
+                            <time class="font-semibold text-[#0079FF]">~ 04:00 - 05:00 น.</time>
+                            <h3 class="font-bold text-lg">จุดเริ่มต้นความขัดแย้ง</h3>
+                            <p class="text-gray-600">น.ส.พุทธชาด (โจทก์ร่วม) และ นายวินัย (จำเลย) มีปากเสียงและทะเลาะวิวาทกันเรื่องส่วนตัวภายในบ้านพักของจำเลย ทั้งสองฝ่ายให้การเกี่ยวกับเหตุการณ์นี้แตกต่างกันโดยสิ้นเชิง โดยมีประเด็นเรื่องการทำร้ายร่างกายและอาวุธปืนเข้ามาเกี่ยวข้อง</p>
+                        </div>
+                    </div>
+                     <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">
+                            <time class="font-semibold text-[#0079FF]">ช่วงเช้า</time>
+                            <h3 class="font-bold text-lg">พยายามงัดห้อง</h3>
+                            <p class="text-gray-600">หลังเหตุการณ์สงบลง น.ส.พุทธชาดพยายามงัดหน้าต่างห้องของจำเลยเพราะเชื่อว่ามีกัญชาซ่อนอยู่ ทำให้ความขัดแย้งปะทุขึ้นอีกครั้ง</p>
+                        </div>
+                    </div>
+                     <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">
+                            <time class="font-semibold text-[#0079FF]">~ 08:00 - 09:00 น.</time>
+                            <h3 class="font-bold text-lg">แจ้งเจ้าพนักงานตำรวจ</h3>
+                            <p class="text-gray-600">จำเลยโทรศัพท์แจ้งตำรวจว่า น.ส.พุทธชาดบุกรุกและมีอาวุธปืนข่มขู่ตน</p>
+                        </div>
+                    </div>
+                     <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">
+                            <time class="font-semibold text-[#0079FF]">~ 09:00 น. เป็นต้นไป</time>
+                            <h3 class="font-bold text-lg">ตำรวจเข้าตรวจค้น</h3>
+                            <p class="text-gray-600">ร.ต.ต. กิตติพงษ์ พร้อมกำลังตำรวจเข้าตรวจสอบที่เกิดเหตุและดำเนินการตรวจค้นบ้านพัก รถยนต์ และบริเวณโดยรอบ แต่ไม่พบอาวุธปืนตามที่จำเลยกล่าวอ้าง</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="conflict" class="mb-16">
+                 <h2 class="text-2xl md:text-3xl font-bold text-center text-[#004AAD] mb-8">ความจริงสองด้าน: เรื่องเล่าที่แตกต่าง</h2>
+                 <div class="grid md:grid-cols-2 gap-8">
+                    <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-[#0079FF]">
+                        <h3 class="text-xl font-bold text-[#004AAD] mb-4">ฝั่งโจทก์ร่วม (น.ส.พุทธชาด)</h3>
+                        <ul class="space-y-3 text-gray-700 list-disc list-inside">
+                            <li>ถูกจำเลย <span class="font-semibold">ทำร้ายร่างกาย</span> (ผลัก, ขึ้นคร่อม, บีบคอ)</li>
+                            <li>จำเลยสร้างเรื่อง <span class="font-semibold">กล่าวหาว่าตนมีปืน</span> เพื่อกลั่นแกล้ง</li>
+                            <li>ยืนยันว่าตน <span class="font-semibold">ไม่มีอาวุธปืน</span> ในวันเกิดเหตุ</li>
+                            <li>เรียกร้องค่าเสียหาย 550,000 บาท จากการทำให้เสียชื่อเสียงและอาชีพ</li>
+                        </ul>
+                    </div>
+                     <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-red-500">
+                        <h3 class="text-xl font-bold text-[#004AAD] mb-4">ฝั่งจำเลย (นายวินัย)</h3>
+                        <ul class="space-y-3 text-gray-700 list-disc list-inside">
+                             <li>ปฏิเสธข้อกล่าวหาทั้งหมด</li>
+                             <li>อ้างว่าโจทก์ร่วมเป็นฝ่าย <span class="font-semibold">มีอาวุธปืน</span> และ <span class="font-semibold">ข่มขู่</span> ตนก่อน</li>
+                             <li>อ้างว่าบุตรบุญธรรมของโจทก์ร่วมเป็นคน <span class="font-semibold">นำปืนออกไป</span></li>
+                             <li>แจ้งตำรวจตามข้อเท็จจริงที่เกิดขึ้น</li>
+                        </ul>
+                    </div>
+                 </div>
+            </section>
+            
+            <section id="verdict" class="mb-16">
+                <h2 class="text-2xl md:text-3xl font-bold text-center text-[#004AAD] mb-8">คำพิพากษาและเหตุผลสำคัญ</h2>
+                <div class="grid md:grid-cols-2 gap-8 items-center">
+                    <div class="bg-white rounded-lg shadow-md p-6 text-center">
+                        <p class="text-xl text-gray-700">ผลคำพิพากษา</p>
+                        <p class="text-6xl font-extrabold text-[#004AAD] my-4">ยกฟ้อง</p>
+                        <p class="text-gray-600">ศาลพิพากษายกฟ้องจำเลย เนื่องจากพยานหลักฐานของโจทก์ยังมีความสงสัยตามสมควร จึงต้องยกประโยชน์แห่งความสงสัยให้แก่จำเลย</p>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h3 class="text-xl font-bold text-center text-[#004AAD] mb-4">ปัจจัยที่นำไปสู่ข้อสงสัยของศาล</h3>
+                        <p class="text-center text-gray-600 mb-4">ศาลพบว่ามีหลายประเด็นที่ทำให้พยานหลักฐานของฝ่ายโจทก์ขาดน้ำหนักและไม่สามารถพิสูจน์ความผิดของจำเลยได้โดยปราศจากข้อสงสัย</p>
+                        <div class="chart-container">
+                            <canvas id="doubtChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                 <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
+                    <div class="bg-white rounded-lg shadow-md p-6 text-center">
+                        <div class="text-4xl mb-2">⏱️</div>
+                        <h4 class="font-bold text-[#004AAD]">ช่องว่างของเวลา</h4>
+                        <p class="text-sm text-gray-600">เหตุการณ์เกิดตอนตี 5 แต่ตำรวจเข้าตรวจค้นตอน 9 โมงเช้า มีเวลาห่างกันถึง <span class="font-bold">4 ชั่วโมง</span> ซึ่งอาจมีการเคลื่อนย้าย/ซ่อนอาวุธปืนได้</p>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md p-6 text-center">
+                        <div class="text-4xl mb-2">🔍</div>
+                        <h4 class="font-bold text-[#004AAD]">การตรวจค้นไม่สมบูรณ์</h4>
+                        <p class="text-sm text-gray-600">เจ้าหน้าที่ตำรวจไม่สามารถยืนยันได้ว่า <span class="font-bold">ตรวจค้นตัวบุคคลทุกคน</span> หรือตรวจค้นกระเป๋าของโจทก์ร่วมที่อยู่กับบุตรบุญธรรมหรือไม่</p>
+                    </div>
+                     <div class="bg-white rounded-lg shadow-md p-6 text-center">
+                        <div class="text-4xl mb-2">👤</div>
+                        <h4 class="font-bold text-[#004AAD]">ขาดพยานปากสำคัญ</h4>
+                        <p class="text-sm text-gray-600">ฝ่ายโจทก์ <span class="font-bold">ไม่ได้นำนายอนิวรรต์น</span> (บุตรบุญธรรม) ซึ่งอยู่ในเหตุการณ์สำคัญมาเป็นพยาน ทำให้ขาดข้อมูลชี้ขาดในประเด็นอาวุธปืน</p>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md p-6 text-center">
+                        <div class="text-4xl mb-2">📸</div>
+                        <h4 class="font-bold text-[#004AAD]">หลักฐานภาพถ่ายขัดแย้ง</h4>
+                        <p class="text-sm text-gray-600">ศาลเห็นว่าภาพถ่ายที่อ้างว่าถูกทำร้าย <span class="font-bold">ไม่สอดคล้อง</span> กับคำให้การที่ว่าถูกบีบคออย่างรุนแรง และพฤติกรรมของจำเลยดูไม่สมเหตุสมผล</p>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <footer class="text-center border-t border-gray-300 pt-8 mt-12">
+            <p class="text-lg font-semibold text-[#004AAD]">หลักกฎหมายสำคัญ: In Dubio Pro Reo</p>
+            <p class="text-gray-600 max-w-2xl mx-auto">"เมื่อมีความสงสัย ให้ยกประโยชน์แห่งความสงสัยนั้นให้แก่จำเลย" คดีนี้เป็นตัวอย่างที่ชัดเจนว่าภาระการพิสูจน์ความผิดในคดีอาญาตกเป็นของฝ่ายโจทก์ ซึ่งต้องพิสูจน์จนสิ้นสงสัย หากยังมีช่องว่างหรือข้อกังขาในพยานหลักฐาน ศาลจะยกฟ้องจำเลย</p>
+        </footer>
+
+    </div>
+
+    <script>
+        function wrapText(text, maxLength) {
+            if (typeof text !== 'string' || text.length <= maxLength) {
+                return text;
+            }
+            const words = text.split(' ');
+            const lines = [];
+            let currentLine = '';
+            for (const word of words) {
+                if ((currentLine + ' ' + word).length > maxLength && currentLine.length > 0) {
+                    lines.push(currentLine);
+                    currentLine = word;
+                } else {
+                    if (currentLine.length > 0) {
+                        currentLine += ' ' + word;
+                    } else {
+                        currentLine = word;
+                    }
+                }
+            }
+            if (currentLine.length > 0) {
+                lines.push(currentLine);
+            }
+            return lines;
+        }
+
+        const ctx = document.getElementById('doubtChart').getContext('2d');
+        const doubtChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: [
+                    'ช่องว่างของเวลา',
+                    'การตรวจค้นไม่สมบูรณ์',
+                    'ขาดพยานปากสำคัญ',
+                    'หลักฐานขัดแย้ง'
+                ],
+                datasets: [{
+                    label: 'ปัจจัยที่ทำให้เกิดข้อสงสัย',
+                    data: [25, 25, 30, 20],
+                    backgroundColor: [
+                        '#004AAD',
+                        '#0079FF',
+                        '#52A5FF',
+                        '#B3D7FF'
+                    ],
+                    borderColor: '#FFFFFF',
+                    borderWidth: 3
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            font: {
+                                family: "'Sarabun', sans-serif",
+                                size: 14,
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            title: function(tooltipItems) {
+                                const item = tooltipItems[0];
+                                let label = item.chart.data.labels[item.dataIndex];
+                                if (Array.isArray(label)) {
+                                  return label.join(' ');
+                                } else {
+                                  return label;
+                                }
+                            }
+                        },
+                        titleFont: {
+                            family: "'Sarabun', sans-serif"
+                        },
+                        bodyFont: {
+                           family: "'Sarabun', sans-serif"
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+
+</body>
+</html>
